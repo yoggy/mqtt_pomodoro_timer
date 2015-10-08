@@ -32,15 +32,6 @@ if $config["use_auth"] == true
   $conn_opts["password"] = $config["password"]
 end
 
-$conn = nil
-
-def publish(msg)
-  msg = "    " if msg.nil?
-  str = "segd" + msg   # for serial_sseg.ino protocol
-  puts "publish : topic=" + $config["publish_topic"] + ", message=" + str
-  $conn.publish($config["publish_topic"], str)
-end
-
 $last_received_t = 0
 $last_received_1 = 0
 $start_t = 0
@@ -56,8 +47,19 @@ def format_t(t)
   sprintf("%02d.%02d", h, m)
 end
 
+$conn = nil
+
+def publish(msg)
+  return if $conn.nil?
+  msg = "    " if msg.nil?
+  str = "segd" + msg   # for serial_sseg.ino protocol
+  puts "publish : topic=" + $config["publish_topic"] + ", message=" + str
+  $conn.publish($config["publish_topic"], str)
+end
+
 def check
-  if diff($last_received_t) > 30
+  puts diff($last_received_t), diff($last_received_1), diff($start_t)
+  if diff($last_received_t) > 31
     msg = "DOWN"
     $start_t = 0
   else
@@ -87,30 +89,29 @@ end
 
 loop do
   begin
-    MQTT::Client.connect($conn_opts) do |c|
-       puts "connected!"
+    $conn = MQTT::Client.connect($conn_opts)
+    puts "connected!"
     
-       $conn = c
+    Thread.start do
+      loop do
+        check
+        sleep 1
+      end
+    end
     
-       Thread.start do
-         loop do
-           check
-           sleep 1
-         end
-       end
-    
-       puts "subscribe : topic=" + $config['subscribe_topic']
-       c.get($config['subscribe_topic']) do |t, msg|
-         hvcc = JSON.parse(msg)
-         $last_received_t = Time.now.to_i
-         if hvcc[$config['check_key']].to_i > 0
-           $last_received_1 = Time.now.to_i
-         end
-       end
+    puts "subscribe : topic=" + $config['subscribe_topic']
+    $conn.get($config['subscribe_topic']) do |t, msg|
+      hvcc = JSON.parse(msg)
+      $last_received_t = Time.now.to_i
+      if hvcc[$config['check_key']].to_i > 0
+        $last_received_1 = Time.now.to_i
+      end
     end
   rescue Exception => e
     puts e
   end
+  $conn.disconnect if $conn.nil?
+  $conn = nil
   puts "reconnecting..."
   sleep 3
 end
