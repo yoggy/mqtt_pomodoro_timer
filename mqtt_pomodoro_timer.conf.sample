@@ -1,0 +1,29 @@
+;
+; mqtt_pomodoro_timer..conf - for supervisord configuration file
+;
+; install
+;     $ pwd
+;       (check your scrpt path...)
+;     $ sudo cp mqtt_pomodoro_timer.conf.sample /etc/supervisor/conf.d/mqtt_pomodoro_timer.conf
+;     $ sudo vi /etc/supervisor/conf.d/mqtt_pomodoro_timer.conf
+;       (fix path, etc...)
+;     $ sudo supervisorctl reread
+;     $ sudo supervisorctl add mqtt_pomodoro_timer
+;     $ sudo supervisorctl status
+;     mqtt_pomodoro_timer                  RUNNING    pid 8192, uptime 0:00:30
+;
+; see also
+;     Supervisor: A Process Control System
+;     http://supervisord.org/
+;
+[program:mqtt_pomodoro_timer]
+command         = /usr/bin/ruby /home/pi/work/mqtt_pomodoro_timer/mqtt_pomodoro_timer.rb
+numprocs        = 1
+autostart       = true
+autorestart     = true
+redirect_stderr = true
+user            = pi
+environment     = HOME=/home/pi/
+directory       = /home/pi/work/mqtt_pomodoro_timer/
+stdout_logfile  = /home/pi/work/mqtt_pomodoro_timer/log.txt
+
