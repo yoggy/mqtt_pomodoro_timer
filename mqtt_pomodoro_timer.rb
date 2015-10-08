@@ -61,7 +61,7 @@ def check
     msg = "DOWN"
     $start_t = 0
   else
-    if diff($last_received_1) < 10
+    if diff($last_received_1) < 30
       $start_t = Time.now.to_i if $start_t == 0
 
       t = diff($start_t)
