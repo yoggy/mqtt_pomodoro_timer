@@ -21,9 +21,9 @@ setup
     use_auth: true
     username: username
     password: password
-    subscribe_topic: hvcc_face0
+    subscribe_topic: hvcc_face0      # <- https://github.com/yoggy/mqtt_tiny_clock_pub
     check_key: detect_face_num
-    publish_topic: 7seg0001
+    publish_topic: 7seg0001          # <- https://github.com/yoggy/node-omron-hvc-c-test
     
     $ ./mqtt_pomodoro_timer.rb
         .
