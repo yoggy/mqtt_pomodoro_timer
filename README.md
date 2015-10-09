@@ -2,6 +2,8 @@ mqtt_pomodoro_timer
 ====
 ![img01.jpg](img01.jpg)
 
+![img02.jpg](img02.jpg)
+
 setup
 ----
 
