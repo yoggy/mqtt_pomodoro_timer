@@ -58,7 +58,6 @@ def publish(msg)
 end
 
 def check
-  puts diff($last_received_t), diff($last_received_1), diff($start_t)
   if diff($last_received_t) > 31
     msg = "DOWN"
     $start_t = 0
@@ -87,17 +86,21 @@ def check
   publish(msg)
 end
 
+Thread.start do
+  loop do
+    begin
+      check
+      sleep 1
+    rescue Exception => e
+      puts e
+    end
+  end
+end
+
 loop do
   begin
     $conn = MQTT::Client.connect($conn_opts)
     puts "connected!"
-    
-    Thread.start do
-      loop do
-        check
-        sleep 1
-      end
-    end
     
     puts "subscribe : topic=" + $config['subscribe_topic']
     $conn.get($config['subscribe_topic']) do |t, msg|
