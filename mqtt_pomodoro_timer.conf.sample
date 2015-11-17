@@ -17,13 +17,16 @@
 ;     http://supervisord.org/
 ;
 [program:mqtt_pomodoro_timer]
-command         = /usr/bin/ruby /home/pi/work/mqtt_pomodoro_timer/mqtt_pomodoro_timer.rb
-numprocs        = 1
-autostart       = true
-autorestart     = true
-redirect_stderr = true
-user            = pi
-environment     = HOME=/home/pi/
-directory       = /home/pi/work/mqtt_pomodoro_timer/
-stdout_logfile  = /home/pi/work/mqtt_pomodoro_timer/log.txt
-
+command                 = /usr/bin/ruby /home/pi/work/mqtt_pomodoro_timer/mqtt_pomodoro_timer.rb
+numprocs                = 1
+autostart               = true
+autorestart             = true
+redirect_stderr         = true
+user                    = pi
+environment             = HOME=/home/pi/
+directory               = /home/pi/work/mqtt_pomodoro_timer/
+stdout_logfile          = /home/pi/work/mqtt_pomodoro_timer/log.txt
+startsecs               = 7
+startretries            = 10
+stdout_logfile_maxbytes = 50MB
+stdout_logfile_backups  = 3
